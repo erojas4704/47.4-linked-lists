@@ -29,7 +29,6 @@ class LinkedList {
         }
 
         this.length++;
-
         this.tail = node;
     }
 
@@ -37,12 +36,12 @@ class LinkedList {
 
     unshift(val) {
         let node = new Node(val);
-        if (!this.head) {
-            this.head = node;
+        let previousHead = this.head;
+        this.head = node;
+        this.head.next = previousHead;
+
+        if (!this.head.next) {
             this.tail = node;
-        } else {
-            node.next = this.head;
-            this.head = node;
         }
 
         this.length++;
@@ -52,19 +51,28 @@ class LinkedList {
 
     pop() {
         let node = this.head;
+
         if (!node) return null;
         let previous;
+
+        if(this.head === this.tail){
+            this.length = 0;
+            this.head = this.tail = null;
+            return node?.val;
+        }
 
         while (node) {
             previous = node;
             node = node.next;
             if (node === this.tail) {
                 this.tail = previous;
+                this.tail.next = null;
+                break;
             }
         }
 
         this.length--;
-        return node;
+        return node?.val;
     }
 
     /** shift(): return & remove first item. */
@@ -74,13 +82,12 @@ class LinkedList {
         if (!node) return;
 
         this.head = this.head?.next;
-        length--;
-        return node;
+        if (node === this.tail) this.tail = null;
+        this.length--;
+        return node?.val;
     }
 
-    /** getAt(idx): get val at idx. */
-
-    getAt(idx) {
+    getNodeAt(idx) {
         let i = 0;
         let node = this.head;
 
@@ -92,6 +99,24 @@ class LinkedList {
         }
     }
 
+    /** getAt(idx): get val at idx. */
+
+    getAt(idx) {
+        return this.getNodeAt(idx)?.val;
+    }
+
+    toString() {
+        let node = this.head;
+        let str = '';
+
+        while (node) {
+            str += node.val + ' ';
+            node = node.next;
+        }
+
+        return `[${str}]`;
+    }
+
     /** setAt(idx, val): set val at idx to val */
 
     setAt(idx, val) {
@@ -101,8 +126,8 @@ class LinkedList {
             this.head = newNode;
         } else {
             try {
-                let previous = this.getAt(idx);
-                let next = this.getAt(idx + 1);
+                let previous = this.getNodeAt(idx - 1);
+                let next = this.getNodeAt(idx + 1);
                 previous.next = newNode;
                 newNode.next = next;
                 if (!newNode.next) this.tail = newNode;
@@ -122,7 +147,7 @@ class LinkedList {
             if (!newNode.next) this.tail = newNode;
         } else {
             try {
-                let previous = this.getAt(idx - 1);
+                let previous = this.getNodeAt(idx - 1);
                 let next = previous.next;
                 previous.next = newNode;
                 newNode.next = next;
@@ -138,7 +163,7 @@ class LinkedList {
 
     removeAt(idx) {
 
-        let previous = this.getAt(idx - 1);
+        let previous = this.getNodeAt(idx - 1);
         let next = previous?.next?.next;
         let node;
 
@@ -154,7 +179,7 @@ class LinkedList {
             if (!node.next) this.tail = node;
             this.length--;
         }
-        
+
         if (this.length - 1 < 1) {
             this.tail = null;
         }

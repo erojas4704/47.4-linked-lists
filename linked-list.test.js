@@ -54,7 +54,8 @@ describe("pop", function() {
     expect(lst.head.val).toBe(5);
     expect(lst.tail.val).toBe(5);
     expect(lst.length).toBe(1);
-
+    
+    console.log(lst.toString());
     expect(lst.pop()).toBe(5);
     expect(lst.tail).toBe(null);
     expect(lst.head).toBe(null);
